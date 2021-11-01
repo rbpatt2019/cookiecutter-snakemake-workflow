@@ -1,0 +1,16 @@
+name: devel
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python=={{cookiecutter.python}}
+  - r-base=={{cookiecutter.r_version}}
+  - snakemake=={{cookiecutter.min_snakemake_version}}
+  - singularity=={{cookiecutter.singularity}}
+  - nox
+  - pre-commit
+  - pytest
+  - pip==21.3.1
+  - pip:
+    - commitizen

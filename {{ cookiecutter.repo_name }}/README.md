@@ -1,104 +1,157 @@
 # Snakemake workflow: {{cookiecutter.project_name}}
 
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![CI/CD](https://github.com/{{cookiecutter.username}}/{{cookiecutter.repo_name}}/actions/workflows/cicd.yaml/badge.svg)](https://github.com/{{cookiecutter.username}}/{{cookiecutter.repo_name}}/actions/workflows/cicd.yaml)
 [![Snakemake](https://img.shields.io/badge/snakemake-≥{{cookiecutter.min_snakemake_version}}-brightgreen.svg)](https://snakemake.bitbucket.io)
-[![Build Status](https://travis-ci.org/snakemake-workflows/{{cookiecutter.repo_name}}.svg?branch=master)](https://travis-ci.org/snakemake-workflows/{{cookiecutter.repo_name}})
+[![Codestyle: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Codestyle: snakefmt](https://img.shields.io/badge/code%20style-snakefmt-000000.svg)](https://github.com/snakemake/snakefmt)
 
-This is the template for a new Snakemake workflow. Replace this text with a comprehensive description covering the purpose and domain.
-Insert your code into the respective folders, i.e. `scripts`, `rules`, and `envs`. Define the entry point of the workflow in the `Snakefile` and the main configuration in the `config.yaml` file.
+{{cookiecutter.description}}
+
+This is the template for a new Snakemake workflow.
+Replace this text with a comprehensive description covering the purpose and domain.
+Insert your code into the respective folders, i.e. `scripts`, `rules`, and `envs`.
+Define the entry point of the workflow in the `Snakefile` and the main configuration in the `config.yaml` file.
 
 ## Authors
 
 * {{cookiecutter.full_name}} (@{{cookiecutter.username}})
 
-## Usage
+## Notes on Installation
 
-If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and, if available, its DOI (see above).
+### Necessary Software
 
-### Step 1: Obtain a copy of this workflow
+This pipeline needs [conda][conda]
+and [snakemake][sm]
+installed,
+and runs best if you also have [singularity][sing]
+installed,
+though it's not required.
 
-1. Create a new github repository using this workflow [as a template](https://help.github.com/en/articles/creating-a-repository-from-a-template).
-2. [Clone](https://help.github.com/en/articles/cloning-a-repository) the newly created repository to your local system, into the place where you want to perform the data analysis.
+Snakemake recommends using [mambaforge][mambaforge]
+as your base conda,
+which I would also recommend.
+Installation instructions are at the above link.
+If you prefer a vanilla conda installation,
+you can always try `mamba` following the instructions at the above snakemake link.
+Once you have conda installed,
+install snakemake as outlined on their page
+(again, see the above link)
+and activate your snakemake environment.
 
-### Step 2: Configure workflow
+If you are running on a Linux system,
+then singularity can be installed from conda like so:
 
-Configure the workflow according to your needs via editing the files in the `config/` folder. Adjust `config.yaml` to configure the workflow execution, and `samples.tsv` to specify your sample setup.
+```shell
+conda install -n snakemake -c conda-forge singularity
+```
 
-### Step 3: Install Snakemake
+It's a bit more challenging for other operating systems.
+Your best bet is to follow their instructions
+[here][sing_install].
+But don't worry!
+**Singularity is _not_ regquired!**
+Snakemake will still run each step in its own Conda environment,
+it just won't put each Conda environment in a container.
 
-Install Snakemake using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html):
+### Get the Source Code
 
-    conda create -c bioconda -c conda-forge -n snakemake snakemake
+Navigate to our [release][releases]
+page on github and download the most recent version.
+The following will do the trick:
 
-For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
+```shell
+curl -s https://api.github.com/repos/IMS-Bio2Core-Facility/single_snake_sequencing/releases/latest |
+grep tarball_url |
+cut -d " " -f 4 |
+tr -d '",' |
+xargs -n1 curl -sL |
+tar xzf -
+```
 
-### Step 4: Execute workflow
+After querying the github api to get the most recent release information,
+we grep for the desired URL,
+split the line and extract the field,
+trim superfluous characters,
+use `xargs` to pipe this to `curl` while allowing for re-directs,
+and un-tar the files.
+Easy!
 
-Activate the conda environment:
+Alternatively,
+for the bleeding edge,
+please clone the repo like so:
 
-    conda activate snakemake
+```shell
+git clone https://github.com/IMS-Bio2Core-Facility/single_snake_sequencing
+```
 
-Test your configuration by performing a dry-run via
+> :warning: **Heads Up!**
+> The bleeding edge may not be stable,
+> as it contains all active development.
 
-    snakemake --use-conda -n
+However you choose to install it,
+`cd` into the directory.
 
-Execute the workflow locally via
+### Running
 
-    snakemake --use-conda --cores $N
+Once you've installed the above software,
+and fetched the code,
+running the pipeline is as simple as:
 
-using `$N` cores or run it in a cluster environment via
+```shell
+snakemake --use-conda --use-singularity --cores 6
+```
 
-    snakemake --use-conda --cluster qsub --jobs 100
+If you aren't using `singularity`,
+then leave off the apropriate flag, as so:
 
-or
+```shell
+snakemake --use-conda --cores 6
+```
 
-    snakemake --use-conda --drmaa --jobs 100
+And `snakemake` will automatically leave it off.
 
-If you not only want to fix the software stack but also the underlying OS, use
+## Notes on Configuration
 
-    snakemake --use-conda --use-singularity
+> :warning:  **Be sure to change the configuration to suit your project!**
 
-in combination with any of the modes above.
-See the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/executable.html) for further details.
+For a full discussion of configuration,
+please see the [configuration README](config/README.md).
 
-### Step 5: Investigate results
+Briefly,
+the general configuration file must be located at `config/config.yaml`.
+A samplesheet containing information pertaining to the data must be supplied as well.
+Both are schema validated.
 
-After successful execution, you can create a self-contained interactive HTML report with all results via:
+## Notes on Data
 
-    snakemake --report report.html
+NOTES ON THE DATA
 
-This report can, e.g., be forwarded to your collaborators.
-An example (using some trivial test data) can be seen [here](https://cdn.rawgit.com/snakemake-workflows/rna-seq-kallisto-sleuth/master/.test/report.html).
+## Notes on the tools
 
-### Step 6: Commit changes
+The analysis pipeline was run using Snakemake {{cookiecutter.min_snakemake_version}}>
+The full version and software lists can be found under the relevant yaml files in `workflow/envs`.
+The all reasonable efforts have been made to ensure that the repository adheres to the best practices
+outlined [here](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html).
 
-Whenever you change something, don't forget to commit the changes back to your github copy of the repository:
+## Notes on the analysis
 
-    git commit -a
-    git push
+For a full discussion on the analysis methods,
+please see the [technical documentation](workflow/documentation.md).
 
-### Step 7: Obtain updates from upstream
+## Future work
 
-Whenever you want to synchronize your workflow copy with new developments from upstream, do the following.
+- [ ] Add future work
 
-1. Once, register the upstream repository in your local copy: `git remote add -f upstream git@github.com:snakemake-workflows/{{cookiecutter.repo_name}}.git` or `git remote add -f upstream https://github.com/snakemake-workflows/{{cookiecutter.repo_name}}.git` if you do not have setup ssh keys.
-2. Update the upstream version: `git fetch upstream`.
-3. Create a diff with the current version: `git diff HEAD upstream/master workflow > upstream-changes.diff`.
-4. Investigate the changes: `vim upstream-changes.diff`.
-5. Apply the modified diff via: `git apply upstream-changes.diff`.
-6. Carefully check whether you need to update the config files: `git diff HEAD upstream/master config`. If so, do it manually, and only where necessary, since you would otherwise likely overwrite your settings and samples.
+## Contributing
 
+If you are interested in contributing,
+please see our [Contributor's Guide](./CONTRIBUTING.md)
 
-### Step 8: Contribute back
-
-In case you have also changed or added steps, please consider contributing them back to the original repository:
-
-1. [Fork](https://help.github.com/en/articles/fork-a-repo) the original repo to a personal or lab account.
-2. [Clone](https://help.github.com/en/articles/cloning-a-repository) the fork to your local system, to a different place than where you ran your analysis.
-3. Copy the modified files from your analysis to the clone of your fork, e.g., `cp -r workflow path/to/fork`. Make sure to **not** accidentally copy config file contents or sample sheets. Instead, manually update the example config files if necessary.
-4. Commit and push your changes to your fork.
-5. Create a [pull request](https://help.github.com/en/articles/creating-a-pull-request) against the original repository.
-
-## Testing
-
-Test cases are in the subfolder `.test`. They are automatically executed via continuous integration with [Github Actions](https://github.com/features/actions).
-
+[sm]: https://snakemake.readthedocs.io/en/stable/index.html "Snakemake"
+[conda]: https://docs.conda.io/en/latest/ "Conda"
+[sing]: https://sylabs.io/singularity/ "Singularity"
+[mambaforge]: https://github.com/conda-forge/miniforge#mambaforge "Mambaforge"
+[sing_install]: https://sylabs.io/guides/3.8/admin-guide/installation.html#installation-on-windows-or-mac "Singularity Install"
+[releases]: https://github.com/IMS-Bio2Core-Facility/single_snake_sequencing/releases "Releases"

@@ -1,0 +1,10 @@
+name: cicd_min
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - snakemake=={{cookiecutter.min_snakemake_version}}
+  - singularity=={{cookiecutter.singularity}}
+  - pytest
+  - snakefmt==0.4.4

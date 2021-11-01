@@ -1,14 +1,12 @@
-$schema: "http://json-schema.org/draft-04/schema#"
+$schema: "http://json-schema.org/draft-07/schema#"
 
-description: snakemake configuration file
+description: Config File Schema
 
-type: object
-
-# possible entries of the config file and which type they should be
 properties:
   samples:
+    description: Samplesheet location
     type: string
 
-# entries that have to be in the config file for successful validation
+additionalProperties: false
 required:
   - samples

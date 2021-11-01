@@ -1,15 +1,19 @@
 from snakemake.utils import validate
-import pandas as pd
+from pathlib import Path
+from yaml import safe_load
 
-# this container defines the underlying OS for each job when using the workflow
-# with --use-conda --use-singularity
-singularity: "docker://continuumio/miniconda3"
+# Validate structures
+with open(config["samples"], "r") as file:
+    metadata = safe_load(file)
+validate(metadata, schema="../schema/samples.schema.yaml")
+validate(config, schema="../schema/config.schema.yaml")
 
-##### load config and sample sheets #####
+# Global variables
 
-configfile: "config/config.yaml"
-validate(config, schema="../schemas/config.schema.yaml")
 
-samples = pd.read_csv(config["samples"], sep="\t").set_index("sample", drop=False)
-samples.index.names = ["sample_id"]
-validate(samples, schema="../schemas/samples.schema.yaml")
+# wildcard_restraints
+
+
+# Input functions
+
+

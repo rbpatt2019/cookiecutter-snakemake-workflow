@@ -1,8 +1,13 @@
 {
-  "full_name": "Johannes Köster",
-  "email": "johannes.koester@protonmail.com",
-  "username": "johanneskoester",
-  "project_name": "RNA-Seq",
-  "repo_name": "rna-seq",
-  "min_snakemake_version": "5.7.0"
+  "full_name": "Ryan Patterson-Cross",
+  "email": "rb.patterson.cross@gmail.com",
+  "username": "rbpatt2019",
+  "project_name": "Project",
+  "repo_name": "project",
+  "min_snakemake_version": "6.10.0",
+  "singularity": "3.7.1",
+  "mambaforge": "4.10.3-7",
+  "python": "3.9",
+  "r_version": "4.1.1",
+  "description": "A snakemake analysis pipeline."
 }
